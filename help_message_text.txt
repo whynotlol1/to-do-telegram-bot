@@ -1,0 +1,11 @@
+List of currently available commands:
+[=====================]
+/help : See this message
+[=====================]
+/new_task : Create a new task
+[=====================]
+/set_done : Set one of your tasks` status as 'Done'
+[=====================]
+/tasks_list : See the list of currently active tasks
+[=====================]
+You can type 'quit' when executing any command if you used the command accidentally!
