@@ -2,7 +2,8 @@ import telebot
 import json
 import os
 
-bot = telebot.TeleBot(token='')
+with open("token.txt", "r") as f:
+    bot = telebot.TeleBot(f.read)
 
 
 @bot.message_handler(commands=["start"])
@@ -27,14 +28,14 @@ def create_new_task(message):
     if message.text.lower() == "quit":
         bot.send_message(message.from_user.id, "Quitting.")
     else:
-        if os.path.isfile(f"{message.from_user.id}.json"):
-            with open(f"{message.from_user.id}.json", "r") as f:
+        if os.path.isfile(f"lists/{message.from_user.id}.json"):
+            with open(f"lists/{message.from_user.id}.json", "r") as f:
                 json_dict = json.loads(f.read())
                 json_dict["active_tasks"].append(f"{message.text}")
-            with open(f"{message.from_user.id}.json", "w") as f:
+            with open(f"lists/{message.from_user.id}.json", "w") as f:
                 f.write(json.dumps(json_dict))
         else:
-            with open(f"{message.from_user.id}.json", "w") as f:
+            with open(f"lists/{message.from_user.id}.json", "w") as f:
                 json_dict = {"active_tasks": [f"{message.text}"]}
                 f.write(json.dumps(json_dict))
         bot.send_message(message.from_user.id, "Created new task for you!")
@@ -42,7 +43,7 @@ def create_new_task(message):
 
 @bot.message_handler(commands=["set_done"])
 def start_setting_as_done(message):
-    if os.path.isfile(f"{message.from_user.id}.json"):
+    if os.path.isfile(f"lists/{message.from_user.id}.json"):
         msg = bot.send_message(message.from_user.id, "What task do you want to set as done?")
         bot.register_next_step_handler(msg, set_as_done)
     else:
@@ -53,18 +54,18 @@ def set_as_done(message):
     if message.text.lower() == "quit":
         bot.send_message(message.from_user.id, "Quitting.")
     else:
-        with open(f"{message.from_user.id}.json", "r") as f:
+        with open(f"lists/{message.from_user.id}.json", "r") as f:
             json_dict = json.loads(f.read())
             del json_dict["active_tasks"][json_dict["active_tasks"].index(f"{message.text}")]
-        with open(f"{message.from_user.id}.json", "w") as f:
+        with open(f"lists/{message.from_user.id}.json", "w") as f:
             f.write(json.dumps(json_dict))
         bot.send_message(message.from_user.id, "Set the task as done!")
 
 
 @bot.message_handler(commands=["tasks_list"])
 def tasks_list_command(message):
-    if os.path.isfile(f"{message.from_user.id}.json"):
-        with open(f"{message.from_user.id}.json", "r") as f:
+    if os.path.isfile(f"lists/{message.from_user.id}.json"):
+        with open(f"lists/{message.from_user.id}.json", "r") as f:
             tasks_list = json.loads(f.read())["active_tasks"]
             text = "Currently active tasks:\n"
             for task in tasks_list:
