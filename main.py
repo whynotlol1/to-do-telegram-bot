@@ -3,7 +3,7 @@ import json
 import os
 
 with open("token.txt", "r") as token_file:
-    bot = telebot.TeleBot(token_file.read)
+    bot = telebot.TeleBot(token_file.read())
 
 
 @bot.message_handler(commands=["start"])
